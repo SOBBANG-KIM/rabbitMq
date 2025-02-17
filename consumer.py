@@ -9,14 +9,13 @@ exchange_name = 'topic_logs'
 channel.exchange_declare(exchange=exchange_name, exchange_type='topic')
 
 # Queue 생성
-queue_name = 'id_specific_queue0'
+queue_name = 'id_specific_queue1'
 channel.queue_declare(queue=queue_name)
 
 # 여러 바인딩 패턴 사용
 binding_patterns = [
-    'mp_mate-1001-1009782',  # 패턴 1
-    'mp_mate-1001-1009782.to',  # 패턴 2
-    'mp_mate-1001-1009782.to.ssid000',  # 패턴 3
+    'mp_mate-1001-1009782.instore.to',  # 패턴 1
+    'mp_mate-1001-1009782.instore.to.ssid000',  # 패턴 3
 ]
 
 for pattern in binding_patterns:
