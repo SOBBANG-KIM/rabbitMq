@@ -4,27 +4,28 @@ import pika
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
 
-# Exchange 선언 (topic 타입)
-exchange_name = 'topic_logs' 
-channel.exchange_declare(exchange=exchange_name, exchange_type='topic')
+# Headers Exchange 선언
+exchange_name = 'mp_mate-1001-1009782.instore'
+channel.exchange_declare(exchange=exchange_name, exchange_type='headers')
 
-# 패턴 2로만 메시지 전송
-routing_key = 'mp_mate-1001-1009782.instore.to.*.002'  # 패턴 2: <코드1-코드2-코드3>.<서비스>
-messages = [
-    {
-        'routing_key': routing_key,  # consumer.py를 위한 메시지
-        'message': 'Message for consumer.py'
-    }
-]
+# 메시지 속성 정의 - ssid001만을 위한 헤더
+headers = {
+    'service': 'tablet',
+    # 'tableId': '003',
+    # 'ssid': 'ssid001',
+}
 
-# 각 consumer를 위한 메시지 발행
-for msg in messages:
-    channel.basic_publish(
-        exchange=exchange_name,
-        routing_key=msg['routing_key'],
-        body=msg['message']
+message = "Test message for ssid001"
+channel.basic_publish(
+    exchange=exchange_name,
+    routing_key='',  # headers exchange는 routing key 불필요
+    body=message,
+    properties=pika.BasicProperties(
+        headers=headers
     )
-    print(f"Sent message: {msg['message']} with routing key: {msg['routing_key']}")
+)
+
+print(f"Sent message with headers: {headers}")
 
 # 연결 종료
 connection.close()
