@@ -9,7 +9,7 @@ exchange_name = 'topic_logs'
 channel.exchange_declare(exchange=exchange_name, exchange_type='topic')
 
 # Queue 생성 (고유한 큐 이름 사용)
-queue_name = ''
+queue_name = 'mp_mate-1001-1009782.ssid001'
 channel.queue_declare(queue=queue_name)
 
 # 여러 바인딩 패턴 사용
