@@ -1,22 +1,26 @@
 import pika
 
 # Connect to RabbitMQ
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+credentials = pika.PlainCredentials('rabbitmq_conn', 'Food12#$')
+connection_params = pika.ConnectionParameters(
+    host='mate-mq.qaftk.kr',
+    port=5672,
+    credentials=credentials
+    # connection_timeout=5000
+)
+connection = pika.BlockingConnection(connection_params)
 channel = connection.channel()
 
-# Exchange 선언 (topic 타입)
-exchange_name = 'topic_logs'
-channel.exchange_declare(exchange=exchange_name, exchange_type='topic')
+# Exchange 이름 설정 (기존 exchange 사용)
+exchange_name = 'amq.topic'
 
 # Queue 생성 (고유한 큐 이름 사용)
-queue_name = 'mp_mate-1001-1009782.ssid002'
-channel.queue_declare(queue=queue_name)
+queue_name = 'mp_extpos_test-1001-1012886.instore-to.01-006'
+channel.queue_declare(queue=queue_name, durable=True)
 
 # 여러 바인딩 패턴 사용
 binding_patterns = [
-    'mp_mate-1001-1009782.instore-to',  # 패턴 1
-    'mp_mate-1001-1009782.instore-to.ssid002',  # 패턴 2
-    'mp_mate-1001-1009782.instore-to.A02'  # 패턴 3
+    'mp_extpos_test-1001-1012886.instore-to.01-006'
 ]
 
 for pattern in binding_patterns:
